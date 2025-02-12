@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #1d2327;
+    color: white;
+  }
+  
+  html,
+  body,
+  #root {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+  
+  #root {
+    display: flex;
+    height: 100%;
+  }
+  
+  .str-chat__channel-list {
+    position: fixed;
+    z-index: 1;
+    height: 100%;
+    width: 0;
+    flex-shrink: 0;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+    transition: width 0.3s ease-out;
+  }
+  
+  .str-chat__channel-list--open {
+    width: 30%;
+    position: fixed;
+  }
+  
+  .str-chat__channel {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .str-chat__main-panel {
+    min-width: 0;
+    flex: 1;
+  }
+  

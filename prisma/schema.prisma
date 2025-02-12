@@ -1,0 +1,76 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // This connects to your PostgreSQL DB using the environment variable in .env
+}
+
+model User {
+  id                Int                  @id @unique @default(autoincrement())
+  profileImage      String?
+  username          String
+  university        String // Represents the university a user belongs to
+  gender            String?
+  dob               DateTime?
+  nationality       String?
+  phone             String?
+  password          String
+  isOnline          Boolean              @default(false)
+  createdAt         DateTime             @default(now())
+
+  // Admin-related fields
+  role              String               @default("user") // Can be 'user', 'admin', or 'superadmin'
+  isAdmin           Boolean              @default(false) // Flag to indicate if the user is an admin
+  isSuperAdmin      Boolean              @default(false) // Flag to indicate if the user is a super admin
+
+  // Relation to PaymentTransaction
+  paymentTransactions PaymentTransaction[]
+
+  // Computed property for payment status
+  hasPaid           Boolean?             @default(false) // This can be computed based on PaymentTransaction
+}
+
+
+
+model PaymentTransaction {
+  id              Int      @id @unique @default(autoincrement())
+  transaction_ref String   @unique // Unique reference for the transaction
+  status          String // Status of the payment (e.g., successful, pending, failed)
+  amount          Int // The amount paid (in UGX)
+  createdAt       DateTime @default(now()) // Automatically set the timestamp of when the transaction is created
+
+  // Foreign key to User model
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+}
+model Post {
+  id          Int      @id @default(autoincrement())
+  title  String   // Header or title of the post
+  content String   // Message or content of the post
+  image   String? 
+  username   String 
+   // URL of the uploaded image (optional)
+  createdAt   DateTime @default(now()) // Timestamp when the post is created
+  updatedAt   DateTime @updatedAt // Automatically updates when the post is modified
+
+  // Admin name field instead of adminId
+    // Stores the name of the admin who created the post
+
+  @@index([username]) // Optional: creates an index on adminName for faster queries
+}
+
+
+model Admin {
+  id       Int     @id @default(autoincrement())
+  username String  @unique
+  password String
+  email    String  @unique
+  phone    String
+
+  // Relation to posts created by this admin
+  
+}
