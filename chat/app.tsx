@@ -1,5 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { StreamChat } from "stream-chat";
+import {
+  StreamChat,
+  Channel as StreamChannelType,
+  ChannelMemberResponse,
+} from "stream-chat";
 import {
   Chat,
   Channel as StreamChannel,
@@ -22,7 +26,7 @@ const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEYY as string;
 
 interface User {
   id: string; // Ensure this is a string
-  username: string;
+  name: string;
   isOnline: boolean;
   university: string;
   profileImage?: string; // Optional field for user image
@@ -33,7 +37,7 @@ const App = () => {
   const [client, setClient] = useState<StreamChat | null>(null);
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
-  const [channel, setChannel] = useState<StreamChat.Channel | null>(null);
+  const [channel, setChannel] = useState<StreamChannelType | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [selectedCampus, setSelectedCampus] = useState<string>("Both");
@@ -86,7 +90,7 @@ const App = () => {
             if (userExists?.users && userExists.users.length > 0) {
               return { ...user, isOnline: userExists.users[0].online };
             } else {
-              console.warn(`User not found in StreamChat: ${user.username}`);
+              console.warn(`User not found in StreamChat: ${user.name}`);
               return null;
             }
           } catch (error) {
@@ -168,26 +172,21 @@ const App = () => {
   };
 
   const getOtherUser = (
-    members: Record<
-      string,
-      { user: { userId: string; username?: string; profileImage?: string } }
-    >,
+    members: Record<string, ChannelMemberResponse>,
     currentUserId: string,
     filteredUsers: User[]
   ): { username: string; image?: string } => {
-    const otherUserId = Object.values(members).find(
-      (member) => member.user.userId !== currentUserId
-    )?.user.userId;
-
-    console.log("Other User ID:", otherUserId);
-
-    if (otherUserId) {
-      const otherUser = filteredUsers.find((user) => user.id === otherUserId);
-      console.log("Found Other User:", otherUser);
+    const otherMember = Object.values(members).find(
+      (member) => member.user && member.user.id !== currentUserId
+    );
+    if (otherMember) {
+      const otherUser =
+        otherMember.user &&
+        filteredUsers.find((user) => user.id === otherMember.user!.id);
       if (otherUser) {
         return {
-          username: otherUser.username || "User not found",
-          image: otherUser.profileImage || undefined,
+          username: otherUser.name,
+          image: otherUser.profileImage,
         };
       } else {
         console.warn("Other user not found in the filteredUsers list");
@@ -252,12 +251,12 @@ const App = () => {
               <div className="flex items-center">
                 <Image
                   src={user.profileImage || "/avata.jpg"}
-                  alt={user.username}
+                  alt={user.name}
                   width={32}
                   height={32}
                   className="rounded-full mr-2"
                 />
-                <span>{user.username || "Unknown User"}</span>
+                <span>{user.name || "Unknown User"}</span>
               </div>
               <span
                 className={`text-sm ${

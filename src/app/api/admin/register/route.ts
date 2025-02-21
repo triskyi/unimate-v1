@@ -2,11 +2,7 @@ import { NextResponse } from 'next/server';
 import { hash } from 'bcryptjs';
 import pool from '../../../../../lib/db'; // Ensure this exports your pg Pool
 
-export const config = {
-  api: {
-    bodyParser: false, // BodyParser is not needed when using req.json()
-  },
-};
+
 
 export async function POST(req: Request) {
   try {

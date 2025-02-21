@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '../../../../../lib/db'; // PostgreSQL connection
-import bcrypt from 'bcrypt'; // For password hashing
+import bcrypt from 'bcryptjs'; // For password hashing
 import jwt from 'jsonwebtoken'; // For JWT
 import dotenv from 'dotenv';
 import path from 'path'; // For handling file paths

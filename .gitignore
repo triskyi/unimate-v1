@@ -55,3 +55,5 @@ large_files/
 # Temporary files
 *.swp
 *.swo
+
+.vercel

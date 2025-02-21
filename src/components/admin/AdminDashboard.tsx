@@ -261,6 +261,10 @@ const AdminDashboard = () => {
 
       {/* Main Content */}
       <div className="flex-grow p-6">
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-500 text-white p-4 mb-4 rounded">{error}</div>
+        )}
         {/* Toggle Button for Sidebar */}
         <button
           onClick={toggleSidebar}

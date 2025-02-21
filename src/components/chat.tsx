@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 
 // Define the User interface
 interface User {
@@ -11,9 +10,7 @@ interface User {
 }
 
 const App = () => {
-  const router = useRouter();
   const [allUsers, setAllUsers] = useState<User[]>([]);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   // Fetch users from the API
   const fetchUsers = async () => {

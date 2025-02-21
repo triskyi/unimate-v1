@@ -28,7 +28,7 @@ const PaymentComponent: React.FC<PaymentComponentProps> = ({
     payment_options: "mobilemoney", // Specify payment options
     customer: {
       email: "unimate@gmail.com", // Customer's email
-      phonenumber: "0789683140", // Customer's phone number
+      phone_number: "0789683140", // Customer's phone number
       name: "Tresor", // Customer's name
     },
     customizations: {

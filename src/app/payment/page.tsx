@@ -10,14 +10,11 @@ const PaymentComponent = dynamic(() => import("../../components/payment"), {
 
 function App() {
   const [userId, setUserId] = useState<string | null>(null);
-  const [hasPaid, setHasPaid] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState(true); // Loading state
-
+  const [hasPaid, setHasPaid] = useState(false); // Payment status state
   // Fetch userId and payment status from local storage
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId"); // Get the userId from local storage
     const paymentStatus = localStorage.getItem("hasPaid"); // Get the payment status from local storage
-
     if (storedUserId) {
       setUserId(storedUserId); // Set the userId
     } else {
@@ -26,9 +23,7 @@ function App() {
 
     // Check if the user has paid
     setHasPaid(paymentStatus === "true"); // Convert string to boolean
-    setIsLoading(false); // Set loading to false after checking
-  }, []); // Runs only once on mount
-
+  }, []); // Add missing closing brace and dependency array
   // Function to fetch all users
   const fetchAllUsers = useCallback(async () => {
     if (!userId) return; // Ensure userId is available
@@ -48,8 +43,13 @@ function App() {
       console.log("Fetched users:", usersList);
 
       // Process the fetched users (example processing logic)
-      const validUsers = usersList.filter((user: any) => user.id); // Filter valid users
-      // Update your state or perform actions with validUsers here
+      interface User {
+        id: string;
+        // Add other user properties here if needed
+      }
+
+      const validUsers = usersList.filter((user: User) => user.id); // Filter valid users
+      console.log("Valid users:", validUsers); // Use validUsers or update your state here
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -63,10 +63,6 @@ function App() {
   }, [fetchAllUsers, userId]); // This will prevent infinite loops
 
   // Show loading indicator while userId and payment status are being fetched
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
   // If userId is not available, show an error message
   if (!userId) {
     return (
@@ -77,14 +73,18 @@ function App() {
   // Render the payment page regardless of payment status
   return (
     <div className="App">
-      <PaymentComponent
-        userId={userId} // Pass the userId to PaymentComponent
-        onPaymentSuccess={() => {
-          console.log("Payment was successful!");
-          setHasPaid(true); // Set hasPaid to true after successful payment
-          localStorage.setItem("hasPaid", "true"); // Save payment status to local storage
-        }}
-      />
+      {hasPaid ? (
+        <div>Thank you for your payment!</div>
+      ) : (
+        <PaymentComponent
+          userId={userId} // Pass the userId to PaymentComponent
+          onPaymentSuccess={() => {
+            console.log("Payment was successful!");
+            setHasPaid(true); // Set hasPaid to true after successful payment
+            localStorage.setItem("hasPaid", "true"); // Save payment status to local storage
+          }}
+        />
+      )}
     </div>
   );
 }
